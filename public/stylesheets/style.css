@@ -4,5 +4,21 @@ body {
 }
 
 a {
-  color: #00B7FF;
+  color: #00b7ff;
 }
+
+/* Starting splash page */
+.spalsh-div {
+  z-index: 200;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: purple;
+  color: white;
+  text-align: center;
+}
+
+
+/* Splash page transition */
