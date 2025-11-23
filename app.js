@@ -4,12 +4,15 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var expressLayouts = require("express-ejs-layouts");
+var connectDB = require("./config/db");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const expressEjsLayouts = require("express-ejs-layouts");
 
 var app = express();
+
+connectDB();
 
 // view engine setup
 app.use(expressEjsLayouts);
