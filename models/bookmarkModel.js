@@ -1,65 +1,61 @@
-// src/models/collection.model.js
 const mongoose = require("mongoose");
-const { Schema } = mongoose;
 
-const collectionSchema = new Schema(
+const bookmarkSchema = new mongoose.Schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    name: {
+    url: {
       type: String,
       required: true,
+      trim: true,
+    },
+
+    title: {
+      type: String,
       trim: true,
     },
 
     description: {
       type: String,
       trim: true,
-      default: "",
     },
 
-    bookmarks: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Bookmark",
-      },
-    ],
-
-    isPublic: {
-      type: Boolean,
-      default: false,
-    },
-
-    slug: {
+    faviconUrl: {
       type: String,
-      unique: false,
       trim: true,
     },
 
-    color: {
-      type: String,
-      default: null,
+    tags: {
+      type: [String],
+      default: [],
     },
+
+    collections: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Collection",
+      },
+    ],
+
+    metadata: {
+      type: mongoose.Schema.Types.Mixed, // Any structure
+      default: {},
+    },
+
+    relatedBookmarks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bookmark",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-// Regex-based slug auto-generation
-collectionSchema.pre("save", function (next) {
-  if (this.isModified("name")) {
-    this.slug = this.name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-  }
-  next();
-});
+bookmarkSchema.index({ user: 1, url: 1 }, { unique: true });
 
-//Collection uniqueness
-collectionSchema.index({ user: 1, name: 1 }, { unique: true });
-
-module.exports = mongoose.model("Collection", collectionSchema);
+module.exports = mongoose.model("Bookmark", bookmarkSchema);
