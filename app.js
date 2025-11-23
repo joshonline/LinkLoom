@@ -8,7 +8,10 @@ var connectDB = require("./config/db");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+
 const expressEjsLayouts = require("express-ejs-layouts");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 var app = express();
 
@@ -27,6 +30,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+// Sessions
+app.use(
+  session({
+    secre: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      collectionName: "sessions",
+    }),
+    // cookie for 1 day
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+  })
+);
 // default locals
 app.use(function (req, res, next) {
   res.locals.title = res.locals.title || "LinkLoom";
