@@ -11,19 +11,6 @@ exports.listBookmarks = async (req, res) => {
   }
 };
 
-// GET /bookmarks/:id (bookmark_id)
-exports.getBookmark = async (req, res) => {
-  try {
-    const bookmark = await Bookmark.findOne({ _id: req.params.id, user: req.session.userId }).populate("collections").exec();
-    if (!bookmark) {
-      return res.status(404).send("Bookmark not found");
-    }
-    res.render("bookmarks/detail", { bookmark, title: bookmark.title || "Bookmark Detail" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error loading bookmark.");
-  }
-};
 
 // GET /bookmarks/new
 exports.getCreateForm = async (req, res) => {
@@ -31,7 +18,7 @@ exports.getCreateForm = async (req, res) => {
   res.render("bookmarks/create", { title: "Add New Bookmark" });
 };
 
-// POST /bookmarks (url, title, description, favicon, tags, collections)
+// POST /bookmarks/new (url, title, description, favicon, tags, collections)
 exports.createBookmark = async (req, res) => {
   try {
     const { url, title, description, faviconUrl, tags, collections } = req.body;
@@ -54,6 +41,20 @@ exports.createBookmark = async (req, res) => {
   }
 };
 
+// GET /bookmarks/:id (bookmark_id)
+exports.getBookmark = async (req, res) => {
+  try {
+    const bookmark = await Bookmark.findOne({ _id: req.params.id, user: req.session.userId }).populate("collections").exec();
+    if (!bookmark) {
+      return res.status(404).send("Bookmark not found");
+    }
+    res.render("bookmarks/detail", { bookmark, title: bookmark.title || "Bookmark Detail" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error loading bookmark.");
+  }
+};
+
 // GET /bookmarks/:id/edit (bookmark_id)
 exports.getEditForm = async (req, res) => {
   try {
@@ -68,7 +69,7 @@ exports.getEditForm = async (req, res) => {
   }
 };
 
-// POST /bookmarks/:id (bookmark_id)
+// POST /bookmarks/:id (bookmark_id, title, description, faviconUrl, tags, collections)
 exports.updateBookmark = async (req, res) => {
   try {
     const { url, title, description, faviconUrl, tags, collections } = req.body;
@@ -96,6 +97,7 @@ exports.updateBookmark = async (req, res) => {
 exports.deleteBookmark = async (req, res) => {
   try {
     await Bookmark.deleteOne({ _id: req.params.id, user: req.session.userId });
+    //Need to update collections
     res.redirect("/bookmarks");
   } catch (err) {
     console.error(err);

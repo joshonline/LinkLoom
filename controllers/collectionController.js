@@ -12,29 +12,13 @@ exports.listCollections = async (req, res) => {
   }
 };
 
-// GET /collections/:id (collection_id)
-exports.getCollection = async (req, res) => {
-  try {
-    const collection = await Collection.findOne({ _id: req.params.id, user: req.session.userId })
-      .populate("bookmarks")
-      .exec();
-    if (!collection) {
-      return res.status(404).send("Collection not found");
-    }
-    // Need to retrieve bookmarks in collection
-    res.render("collections/detail", { collection, title: collection.name });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error loading collection.");
-  }
-};
 
 // GET /collections/new
 exports.getCreateForm = (req, res) => {
   res.render("collections/create", { title: "Create New Collection" });
 };
 
-// POST /collections
+// POST /collections/new
 exports.createCollection = async (req, res) => {
   try {
     const { name, description, isPublic, color } = req.body;
@@ -52,6 +36,23 @@ exports.createCollection = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error creating collection.");
+  }
+};
+
+// GET /collections/:id (collection_id)
+exports.getCollection = async (req, res) => {
+  try {
+    const collection = await Collection.findOne({ _id: req.params.id, user: req.session.userId })
+      .populate("bookmarks")
+      .exec();
+    if (!collection) {
+      return res.status(404).send("Collection not found");
+    }
+    // Need to retrieve bookmarks in collection
+    res.render("collections/detail", { collection, title: collection.name });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error loading collection.");
   }
 };
 
@@ -93,7 +94,6 @@ exports.updateCollection = async (req, res) => {
 };
 
 // POST /collections/:id/delete (collection_id)
-// Need to use 
 exports.deleteCollection = async (req, res) => {
   try {
     await Collection.deleteOne({ _id: req.params.id, user: req.session.userId });

@@ -1,4 +1,4 @@
-const User = require("../models/usersModel"); // adjust filename if needed
+const User = require("../models/usersModel");
 
 // GET /signup
 exports.getSignup = (req, res) => {
