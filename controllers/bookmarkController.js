@@ -1,6 +1,6 @@
 const Bookmark = require("../models/collectionModel");
 
-// GET /bookmarks
+// GET /bookmarks OR GET /bookmarks/list
 exports.listBookmarks = async (req, res) => {
   try {
     const bookmarks = await Bookmark.find({ user: req.session.userId }).populate("collections").exec();
@@ -12,13 +12,13 @@ exports.listBookmarks = async (req, res) => {
 };
 
 
-// GET /bookmarks/new
+// GET /bookmarks/create
 exports.getCreateForm = async (req, res) => {
-  // Need to pre-load user collections
+  // TASK: Need to pre-load user collections
   res.render("bookmarks/create", { title: "Add New Bookmark" });
 };
 
-// POST /bookmarks/new (url, title, description, favicon, tags, collections)
+// POST /bookmarks/create (url, title, description, favicon, tags, collections)
 exports.createBookmark = async (req, res) => {
   try {
     const { url, title, description, faviconUrl, tags, collections } = req.body;
@@ -97,7 +97,7 @@ exports.updateBookmark = async (req, res) => {
 exports.deleteBookmark = async (req, res) => {
   try {
     await Bookmark.deleteOne({ _id: req.params.id, user: req.session.userId });
-    //Need to update collections
+    //TASK: Need to update collections
     res.redirect("/bookmarks");
   } catch (err) {
     console.error(err);

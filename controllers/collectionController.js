@@ -13,12 +13,12 @@ exports.listCollections = async (req, res) => {
 };
 
 
-// GET /collections/new
+// GET /collections/create
 exports.getCreateForm = (req, res) => {
   res.render("collections/create", { title: "Create New Collection" });
 };
 
-// POST /collections/new
+// POST /collections/create
 exports.createCollection = async (req, res) => {
   try {
     const { name, description, isPublic, color } = req.body;
@@ -48,7 +48,7 @@ exports.getCollection = async (req, res) => {
     if (!collection) {
       return res.status(404).send("Collection not found");
     }
-    // Need to retrieve bookmarks in collection
+    // TASK: Need to retrieve bookmarks in collection
     res.render("collections/detail", { collection, title: collection.name });
   } catch (err) {
     console.error(err);
@@ -97,7 +97,7 @@ exports.updateCollection = async (req, res) => {
 exports.deleteCollection = async (req, res) => {
   try {
     await Collection.deleteOne({ _id: req.params.id, user: req.session.userId });
-    // Remove collection reference from Bookmarks
+    // TASK: Remove collection reference from Bookmarks
     await Bookmark.updateMany(
       { collections: req.params.id },
       { $pull: { collections: req.params.id } }
