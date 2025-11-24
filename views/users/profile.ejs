@@ -1,0 +1,71 @@
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <h2 class="mb-4 text-center">Your Profile</h2>
+
+    <!-- Profile Card -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Account Information</h5>
+
+        <p><strong>Username:</strong> <%= user.username %></p>
+
+        <p><strong>Email:</strong> <%= user.email %></p>
+
+        <p>
+          <strong>Display Name:</strong>
+          <%= user.displayName ? user.displayName : "Not set" %>
+        </p>
+      </div>
+    </div>
+
+    <!-- Update Profile Form -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Update Profile</h5>
+
+        <form method="POST" action="/users/profile">
+          <div class="mb-3">
+            <label class="form-label">Display Name</label>
+            <input
+              type="text"
+              name="displayName"
+              class="form-control"
+              value="<%= user.displayName || '' %>"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              value="<%= user.email %>"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input
+              type="text"
+              name="username"
+              class="form-control"
+              value="<%= user.username %>"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">
+            Save Changes
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <div class="text-center mt-4">
+      <a href="/users/logout" class="btn btn-outline-danger"> Log Out </a>
+    </div>
+  </div>
+</div>
