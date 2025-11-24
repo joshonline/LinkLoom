@@ -1,5 +1,5 @@
 const User = require("../models/usersModel");
-
+const Collection = require("../models/collectionModel");
 // GET /signup
 exports.getSignup = (req, res) => {
   res.render("users/signup", { title: "Sign Up" });
@@ -37,6 +37,15 @@ exports.postSignup = async (req, res) => {
     await user.setPassword(password);
     await user.save();
 
+    const defaultCollection = new Collection({
+      user: user._id,
+      name: "Default Collection",
+      description: "Your default bookmark collection",
+      isPublic: false,
+      color: "#ccc",
+    });
+
+    await defaultCollection.save();
     // Log the user in i.e. create session
     req.session.userId = user._id;
 

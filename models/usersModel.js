@@ -37,11 +37,11 @@ const userSchema = new mongoose.Schema(
 );
 
 //default displayname
-userSchema.pre("save", function (next) {
+userSchema.pre("save", async function () {
   if (!this.displayName) {
     this.displayName = this.username;
   }
-  next();
+  // next();
 });
 
 userSchema.methods.setPassword = async function (password) {

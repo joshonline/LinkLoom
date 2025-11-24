@@ -2,9 +2,9 @@
 
 <form action="/bookmarks/create" method="POST" class="mt-4">
   <div class="mb-3">
-    <label for="url" class="form-label"
-      >URL <span class="text-danger">*</span></label
-    >
+    <label for="url" class="form-label">
+      URL <span class="text-danger">*</span>
+    </label>
     <input
       type="url"
       class="form-control"
@@ -17,9 +17,9 @@
   </div>
 
   <div class="mb-3">
-    <label for="title" class="form-label"
-      >Title <span class="text-danger">*</span></label
-    >
+    <label for="title" class="form-label">
+      Title <span class="text-danger">*</span>
+    </label>
     <input
       type="text"
       class="form-control"
@@ -64,16 +64,23 @@
   </div>
 
   <div class="mb-3">
-    <label for="collections" class="form-label"
-      >Collections (comma-separated IDs)</label
-    >
-    <input
-      type="text"
-      class="form-control"
+    <label for="collections" class="form-label">Collections</label>
+    <select
       id="collections"
       name="collections"
-      placeholder="e.g. 123abc, 456def"
-    />
+      class="form-select"
+      multiple
+      size="5"
+    >
+      <% if (!collections || collections.length === 0) { %>
+      <option disabled>No collections available</option>
+      <% } else { %> <% collections.forEach(function(collection) { %>
+      <option value="<%= collection._id %>"><%= collection.name %></option>
+      <% }); %> <% } %>
+    </select>
+    <small class="form-text text-muted">
+      Hold Ctrl (Cmd on Mac) to select multiple
+    </small>
   </div>
 
   <button type="submit" class="btn btn-primary">Create Bookmark</button>
