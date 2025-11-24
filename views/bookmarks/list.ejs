@@ -1,0 +1,57 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Your Bookmarks</h1>
+  <a href="/bookmarks/create" class="btn btn-primary">+ New Bookmark</a>
+</div>
+
+<% if (bookmarks.length === 0) { %>
+<div class="text-center mt-5">
+  <p class="fs-4 text-muted">You have no bookmarks yet.</p>
+  <a href="/bookmarks/create" class="btn btn-outline-primary"
+    >Add your first bookmark</a
+  >
+</div>
+<% } else { %>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <% bookmarks.forEach(function(bookmark) { %>
+  <div class="col">
+    <div class="card h-100">
+      <% if (bookmark.faviconUrl) { %>
+      <img
+        src="<%= bookmark.faviconUrl %>"
+        class="card-img-top"
+        alt="Favicon for <%= bookmark.title %>"
+      />
+      <% } %>
+      <div class="card-body">
+        <h5 class="card-title">
+          <a
+            href="<%= bookmark.url %>"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><%= bookmark.title || bookmark.url %></a
+          >
+        </h5>
+        <% if (bookmark.description) { %>
+        <p class="card-text"><%= bookmark.description %></p>
+        <% } %> <% if (bookmark.tags && bookmark.tags.length) { %>
+        <p>
+          <% bookmark.tags.forEach(function(tag) { %>
+          <span class="badge bg-secondary me-1"><%= tag %></span>
+          <% }); %>
+        </p>
+        <% } %>
+      </div>
+      <div class="card-footer text-muted">
+        <small
+          >Collections: <% if(bookmark.collections &&
+          bookmark.collections.length) { %> <%
+          bookmark.collections.forEach(function(coll, idx) { %> <%= coll.name
+          %><%= (idx < bookmark.collections.length - 1) ? ', ' : '' %> <% }); %>
+          <% } else { %> None <% } %>
+        </small>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+<% } %>

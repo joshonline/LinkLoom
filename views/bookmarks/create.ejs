@@ -1,0 +1,81 @@
+<h1>Add New Bookmark</h1>
+
+<form action="/bookmarks/create" method="POST" class="mt-4">
+  <div class="mb-3">
+    <label for="url" class="form-label"
+      >URL <span class="text-danger">*</span></label
+    >
+    <input
+      type="url"
+      class="form-control"
+      id="url"
+      name="url"
+      required
+      placeholder="https://example.com"
+      autofocus
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="title" class="form-label"
+      >Title <span class="text-danger">*</span></label
+    >
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      name="title"
+      required
+      placeholder="Bookmark title"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea
+      class="form-control"
+      id="description"
+      name="description"
+      rows="3"
+      placeholder="Optional description"
+    ></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="faviconUrl" class="form-label">Favicon URL</label>
+    <input
+      type="url"
+      class="form-control"
+      id="faviconUrl"
+      name="faviconUrl"
+      placeholder="Link to favicon image"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="tags" class="form-label">Tags (comma-separated)</label>
+    <input
+      type="text"
+      class="form-control"
+      id="tags"
+      name="tags"
+      placeholder="e.g. programming, javascript, tutorial"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="collections" class="form-label"
+      >Collections (comma-separated IDs)</label
+    >
+    <input
+      type="text"
+      class="form-control"
+      id="collections"
+      name="collections"
+      placeholder="e.g. 123abc, 456def"
+    />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Create Bookmark</button>
+  <a href="/bookmarks" class="btn btn-secondary ms-2">Cancel</a>
+</form>

@@ -1,4 +1,4 @@
-const Bookmark = require("../models/collectionModel");
+const Bookmark = require("../models/bookmarkModel");
 
 // GET /bookmarks OR GET /bookmarks/list
 exports.listBookmarks = async (req, res) => {
