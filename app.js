@@ -8,8 +8,12 @@ var connectDB = require("./config/db");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var bookmarksRouter = require("./routes/bookmarks");
+var collectionsRouter = require("./routes/collections");
 
 const expressEjsLayouts = require("express-ejs-layouts");
+const useSessions = process.env.USE_SESSIONS === "true";
+
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 
@@ -30,20 +34,25 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Sessions
-app.use(
-  session({
-    secre: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
-      collectionName: "sessions",
-    }),
-    // cookie for 1 day
-    cookie: { maxAge: 1000 * 60 * 60 * 24 },
-  })
-);
+//Sessions
+if (useSessions) {
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI,
+        collectionName: "sessions",
+      }),
+      // cookie for 1 day
+      cookie: { maxAge: 1000 * 60 * 60 * 24 },
+    })
+  );
+}
+// Log whether sessions are used
+console.log(`Using sessions: ${useSessions ? "YES" : "NO"}`);
+
 // default locals
 app.use(function (req, res, next) {
   res.locals.title = res.locals.title || "LinkLoom";
@@ -52,6 +61,8 @@ app.use(function (req, res, next) {
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/bookmarks", bookmarksRouter);
+app.use("/collections", collectionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

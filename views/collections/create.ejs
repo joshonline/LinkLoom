@@ -1,0 +1,49 @@
+<h1>Create New Collection</h1>
+
+<form action="/collections/create" method="POST" novalidate>
+  <% if (typeof error !== 'undefined') { %>
+  <div class="alert alert-danger"><%= error %></div>
+  <% } %>
+
+  <div class="mb-3">
+    <label for="name" class="form-label">Collection Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      name="name"
+      required
+      autofocus
+      value="<%= typeof name !== 'undefined' ? name : '' %>"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea class="form-control" id="description" name="description" rows="3">
+<%= typeof description !== 'undefined' ? description : '' %></textarea
+    >
+  </div>
+
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" id="isPublic"
+    name="isPublic" <%= typeof isPublic !== 'undefined' && isPublic ? 'checked'
+    : '' %> >
+    <label class="form-check-label" for="isPublic"> Public Collection </label>
+  </div>
+
+  <div class="mb-3">
+    <label for="color" class="form-label">Color (optional)</label>
+    <input
+      type="color"
+      class="form-control form-control-color"
+      id="color"
+      name="color"
+      value="<%= typeof color !== 'undefined' ? color : '#563d7c' %>"
+      title="Choose your color"
+    />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Create Collection</button>
+  <a href="/collections" class="btn btn-secondary ms-2">Cancel</a>
+</form>

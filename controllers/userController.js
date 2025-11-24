@@ -1,8 +1,8 @@
 const User = require("../models/usersModel");
-
+const Collection = require("../models/collectionModel");
 // GET /signup
 exports.getSignup = (req, res) => {
-  res.render("signup", { title: "Sign Up" });
+  res.render("users/signup", { title: "Sign Up" });
 };
 
 // POST /signup (email, username, displayName, password)
@@ -11,7 +11,7 @@ exports.postSignup = async (req, res) => {
     const { email, username, displayName, password } = req.body;
 
     if (!email || !username || !password) {
-      return res.status(400).render("signup", {
+      return res.status(400).render("users/signup", {
         error: "Email, username and password are required.",
         title: "Sign Up",
       });
@@ -21,7 +21,7 @@ exports.postSignup = async (req, res) => {
       $or: [{ email }, { username }],
     });
     if (existingUser) {
-      return res.status(400).render("signup", {
+      return res.status(400).render("users/signup", {
         error: "Email or username already in use.",
         title: "Sign Up",
       });
@@ -37,13 +37,22 @@ exports.postSignup = async (req, res) => {
     await user.setPassword(password);
     await user.save();
 
+    const defaultCollection = new Collection({
+      user: user._id,
+      name: "Default Collection",
+      description: "Your default bookmark collection",
+      isPublic: false,
+      color: "#ccc",
+    });
+
+    await defaultCollection.save();
     // Log the user in i.e. create session
     req.session.userId = user._id;
 
     res.redirect("/");
   } catch (err) {
     console.error(err);
-    res.status(500).render("signup", {
+    res.status(500).render("users/signup", {
       error: "Internal Server Error",
       title: "Sign Up",
     });
@@ -52,7 +61,7 @@ exports.postSignup = async (req, res) => {
 
 // GET /login
 exports.getLogin = (req, res) => {
-  res.render("login", { title: "Log In" });
+  res.render("users/login", { title: "Log In" });
 };
 
 // POST /login (username-Or-Email, pass)
@@ -61,7 +70,7 @@ exports.postLogin = async (req, res) => {
     const { usernameOrEmail, password } = req.body;
 
     if (!usernameOrEmail || !password) {
-      return res.status(400).render("login", {
+      return res.status(400).render("users/login", {
         error: "Username/email and password are required.",
         title: "Log In",
       });
@@ -73,7 +82,7 @@ exports.postLogin = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(401).render("login", {
+      return res.status(401).render("users/login", {
         error: "Invalid credentials.",
         title: "Log In",
       });
@@ -81,7 +90,7 @@ exports.postLogin = async (req, res) => {
 
     const valid = await user.validatePassword(password);
     if (!valid) {
-      return res.status(401).render("login", {
+      return res.status(401).render("users/login", {
         error: "Invalid credentials.",
         title: "Log In",
       });
@@ -92,7 +101,7 @@ exports.postLogin = async (req, res) => {
     res.redirect("/");
   } catch (err) {
     console.error(err);
-    res.status(500).render("login", {
+    res.status(500).render("users/login", {
       error: "Internal Server Error",
       title: "Log In",
     });
@@ -115,16 +124,16 @@ exports.logout = (req, res) => {
 // GET /profile
 exports.getProfile = async (req, res) => {
   if (!req.session.userId) {
-    return res.redirect("/login");
+    return res.redirect("login");
   }
   try {
     const user = await User.findById(req.session.userId).select(
       "-passwordHash"
     );
     if (!user) {
-      return res.redirect("/login");
+      return res.redirect("login");
     }
-    res.render("profile", { user, title: "Your Profile" });
+    res.render("users/profile", { user, title: "Your Profile" });
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -132,3 +141,42 @@ exports.getProfile = async (req, res) => {
 };
 
 // TASK: Add POST profile handler
+// POST /profile - update user profile
+exports.postProfile = async (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const { displayName, email } = req.body;
+
+    // Simple validation (add more as needed)
+    if (!email || !displayName) {
+      return res.status(400).render("users/profile", {
+        error: "Email and display name are required.",
+        title: "Your Profile",
+        user: await User.findById(req.session.userId).select("-passwordHash"),
+      });
+    }
+
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    // Update fields
+    user.email = email;
+    user.displayName = displayName;
+
+    await user.save();
+
+    res.redirect("/users/profile");
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("users/profile", {
+      error: "Internal Server Error",
+      title: "Your Profile",
+      user: await User.findById(req.session.userId).select("-passwordHash"),
+    });
+  }
+};

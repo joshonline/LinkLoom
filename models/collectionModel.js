@@ -48,14 +48,13 @@ const collectionSchema = new Schema(
 );
 
 // Regex-based slug auto-generation
-collectionSchema.pre("save", function (next) {
+collectionSchema.pre("save", async function () {
   if (this.isModified("name")) {
     this.slug = this.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
   }
-  next();
 });
 
 //Collection uniqueness

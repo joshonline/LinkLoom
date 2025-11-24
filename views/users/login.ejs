@@ -1,0 +1,41 @@
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <h2 class="mb-4 text-center">Log In</h2>
+
+    <% if (typeof error !== "undefined") { %>
+    <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/users/login" method="POST">
+      <div class="mb-3">
+        <label for="usernameOrEmail" class="form-label"
+          >Username or Email</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="usernameOrEmail"
+          name="usernameOrEmail"
+          required
+        />
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          name="password"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Log In</button>
+    </form>
+
+    <div class="text-center mt-3">
+      <p>Don't have an account? <a href="/users/signup">Sign Up</a></p>
+    </div>
+  </div>
+</div>
