@@ -132,3 +132,42 @@ exports.getProfile = async (req, res) => {
 };
 
 // TASK: Add POST profile handler
+// POST /profile - update user profile
+exports.postProfile = async (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const { displayName, email } = req.body;
+
+    // Simple validation (add more as needed)
+    if (!email || !displayName) {
+      return res.status(400).render("profile", {
+        error: "Email and display name are required.",
+        title: "Your Profile",
+        user: await User.findById(req.session.userId).select("-passwordHash"),
+      });
+    }
+
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.redirect("/login");
+    }
+
+    // Update fields
+    user.email = email;
+    user.displayName = displayName;
+
+    await user.save();
+
+    res.redirect("/users/profile");
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("profile", {
+      error: "Internal Server Error",
+      title: "Your Profile",
+      user: await User.findById(req.session.userId).select("-passwordHash"),
+    });
+  }
+};
