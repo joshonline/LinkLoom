@@ -16,6 +16,7 @@ const useSessions = process.env.USE_SESSIONS === "true";
 
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const passport = require("passport");
 
 var app = express();
 
@@ -50,6 +51,11 @@ if (useSessions) {
     })
   );
 }
+
+require("./config/passport")(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Log whether sessions are used
 console.log(`Using sessions: ${useSessions ? "YES" : "NO"}`);
 
