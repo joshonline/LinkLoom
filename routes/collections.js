@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
 });
 
 // GET /collections/list - list all collections
-router.get("/list", collectionController.listCollections);
+router.get("/list", ensureAuth, collectionController.listCollections);
 
 // GET /collections/create - show collection creation page
 router.get("/create", ensureAuth, collectionController.getCreateCollection);

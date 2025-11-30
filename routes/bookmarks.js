@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
 });
 
 // GET /bookmarks/list - list all bookmarks (dashboard)
-router.get("/list", bookmarkController.listBookmarks);
+router.get("/list", ensureAuth, bookmarkController.listBookmarks);
 
 // GET /bookmarks/create - show bookmark creation page
 router.get("/create", ensureAuth, bookmarkController.getCreateBookmark);
