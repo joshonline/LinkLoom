@@ -5,7 +5,7 @@ const Bookmark = require("../models/bookmarkModel");
 exports.listCollections = async (req, res) => {
   try {
     const collections = await Collection.find({
-      user: req.session.userId,
+      user: req.user._id,
     }).exec();
     res.render("collections/list", { collections, title: "Your Collections" });
   } catch (err) {
@@ -25,7 +25,7 @@ exports.postCreateCollection = async (req, res) => {
     const { name, description, isPublic, color } = req.body;
 
     const collection = new Collection({
-      user: req.session.userId,
+      user: req.user._id,
       name,
       description,
       isPublic: isPublic === "on" ? true : false,
@@ -45,7 +45,7 @@ exports.getCollectionById = async (req, res) => {
   try {
     const collection = await Collection.findOne({
       _id: req.params.id,
-      user: req.session.userId,
+      user: req.user._id,
     })
       .populate("bookmarks")
       .exec();
@@ -65,7 +65,7 @@ exports.getEditCollection = async (req, res) => {
   try {
     const collection = await Collection.findOne({
       _id: req.params.id,
-      user: req.session.userId,
+      user: req.user._id,
     });
     if (!collection) {
       return res.status(404).send("Collection not found");
@@ -84,7 +84,7 @@ exports.postEditCollection = async (req, res) => {
 
     const collection = await Collection.findOne({
       _id: req.params.id,
-      user: req.session.userId,
+      user: req.user._id,
     });
     if (!collection) {
       return res.status(404).send("Collection not found");
@@ -108,7 +108,7 @@ exports.deleteCollection = async (req, res) => {
   try {
     await Collection.deleteOne({
       _id: req.params.id,
-      user: req.session.userId,
+      user: req.user._id,
     });
     // TASK: Remove collection reference from Bookmarks
     await Bookmark.updateMany(
@@ -127,7 +127,7 @@ exports.deleteCollection = async (req, res) => {
 exports.getCollectionBySlug = async (req, res) => {
   try {
     const collection = await Collection.findOne({
-      user: req.session.userId,
+      user: req.user._id,
       slug: req.params.slug,
     });
 

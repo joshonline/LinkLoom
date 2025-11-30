@@ -2,11 +2,11 @@ var express = require("express");
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', (req, res) => {
-  if (req.session && req.session.userId) {
-    return res.redirect('/bookmarks/list');
+router.get("/", (req, res) => {
+  if (!req.user) {
+    return res.render("index");
   }
-  res.render('index');
+  return res.redirect("/bookmarks/list");
 });
 
 module.exports = router;

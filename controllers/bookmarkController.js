@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 exports.listBookmarks = async (req, res) => {
   // TASK: public and private versions
   try {
-    const bookmarks = await Bookmark.find({ user: req.session.userId })
+    const bookmarks = await Bookmark.find({ user: req.user._id })
       .populate("collections")
       .exec();
     res.render("bookmarks/list", { bookmarks, title: "Your Bookmarks" });
@@ -20,7 +20,7 @@ exports.listBookmarks = async (req, res) => {
 exports.getCreateBookmark = async (req, res) => {
   try {
     const collections = await Collection.find({
-      user: req.session.userId,
+      user: req.user._id,
     }).exec();
 
     res.render("bookmarks/create", { title: "Add New Bookmark", collections });
@@ -48,7 +48,7 @@ exports.postCreateBookmark = async (req, res) => {
     }
 
     const bookmark = new Bookmark({
-      user: req.session.userId,
+      user: req.user._id,
       url,
       title,
       description,
@@ -70,7 +70,7 @@ exports.getBookmark = async (req, res) => {
   try {
     const bookmark = await Bookmark.findOne({
       _id: req.params.id,
-      user: req.session.userId,
+      user: req.user._id,
     })
       .populate("collections")
       .exec();
@@ -92,7 +92,7 @@ exports.getEditBookmark = async (req, res) => {
   try {
     const bookmark = await Bookmark.findOne({
       _id: req.params.id,
-      user: req.session.userId,
+      user: req.user._id,
     });
     if (!bookmark) {
       return res.status(404).send("Bookmark not found");
@@ -107,6 +107,14 @@ exports.getEditBookmark = async (req, res) => {
 // POST /bookmarks/:id (bookmark_id, title, description, faviconUrl, tags, collections)
 exports.postEditBookmark = async (req, res) => {
   try {
+    const bookmark = await Bookmark.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+    if (!bookmark) {
+      return res.status(404).send("Bookmark not found");
+    }
+
     const { url, title, description, faviconUrl, tags, collections } = req.body;
 
     if (collections) {
@@ -119,14 +127,6 @@ exports.postEditBookmark = async (req, res) => {
       );
     } else {
       bookmark.collections = [];
-    }
-
-    const bookmark = await Bookmark.findOne({
-      _id: req.params.id,
-      user: req.session.userId,
-    });
-    if (!bookmark) {
-      return res.status(404).send("Bookmark not found");
     }
 
     bookmark.url = url;
@@ -147,7 +147,7 @@ exports.postEditBookmark = async (req, res) => {
 // POST /bookmarks/:id/delete (bookmark_id)
 exports.deleteBookmark = async (req, res) => {
   try {
-    await Bookmark.deleteOne({ _id: req.params.id, user: req.session.userId });
+    await Bookmark.deleteOne({ _id: req.params.id, user: req.user._id });
     //TASK: Need to update collections
     res.redirect("/bookmarks");
   } catch (err) {

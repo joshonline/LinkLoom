@@ -5,10 +5,7 @@ const { ensureAuth } = require("../middleware/auth");
 
 // GET /users/ - redirect dashboard if logged in
 router.get("/", (req, res) => {
-  if (req.session && req.session.userId) {
-    return res.redirect("/bookmarks/list");
-  }
-  res.redirect("/users/login");
+  return res.redirect("/users/profile");
 });
 
 // GET /users/signup

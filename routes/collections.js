@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const collectionController = require("../controllers/collectionController");
+const { ensureAuth } = require("../middleware/auth");
 
 // GET /collections/ - redirect to /collections/list
 router.get("/", (req, res) => {

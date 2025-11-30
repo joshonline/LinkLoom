@@ -6,6 +6,8 @@ const { ensureAuth } = require("../middleware/auth");
 // GET /bookmarks/ - redirect to /bookmarks/list
 router.get("/", (req, res) => {
   res.redirect("/bookmarks/list");
+  // If no user, load only private version of page
+  // If user, load private and public version of page
 });
 
 // GET /bookmarks/list - list all bookmarks (dashboard)

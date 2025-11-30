@@ -7,7 +7,7 @@ exports.ensureAuth = (req, res, next) => {
 
 exports.ensureGuest = (req, res, next) => {
   if (req.isAuthenticated()) {
-    return res.redirect("/resumes");
+    return res.redirect("/bookmarks");
   }
   next();
 };
