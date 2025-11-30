@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const { ensureAuth } = require("../middleware/auth");
 
 // GET /users/ - redirect dashboard if logged in
 router.get("/", (req, res) => {
@@ -26,9 +27,9 @@ router.post("/login", userController.postLogin);
 router.post("/logout", userController.logout);
 
 // GET /users/profile
-router.get("/profile", userController.getProfile);
+router.get("/profile", ensureAuth, userController.getProfile);
 
 // POST /users/profile
-router.post("/profile", userController.postProfile);
+router.post("/profile", ensureAuth, userController.postProfile);
 
 module.exports = router;
