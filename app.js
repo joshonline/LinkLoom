@@ -62,6 +62,7 @@ console.log(`Using sessions: ${useSessions ? "YES" : "NO"}`);
 // default locals
 app.use(function (req, res, next) {
   res.locals.title = res.locals.title || "LinkLoom";
+  res.locals.user = res.locals.user ? req.user : null;
   next();
 });
 

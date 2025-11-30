@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 // GET /bookmarks OR GET /bookmarks/list
 exports.listBookmarks = async (req, res) => {
+  // TASK: public and private versions
   try {
     const bookmarks = await Bookmark.find({ user: req.session.userId })
       .populate("collections")
