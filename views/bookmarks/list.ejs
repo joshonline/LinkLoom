@@ -41,14 +41,38 @@
         </p>
         <% } %>
       </div>
-      <div class="card-footer text-muted">
-        <small
-          >Collections: <% if(bookmark.collections &&
+      <div
+        class="card-footer d-flex justify-content-between align-items-center"
+      >
+        <small class="text-muted">
+          Collections: <% if(bookmark.collections &&
           bookmark.collections.length) { %> <%
           bookmark.collections.forEach(function(coll, idx) { %> <%= coll.name
           %><%= (idx < bookmark.collections.length - 1) ? ', ' : '' %> <% }); %>
           <% } else { %> None <% } %>
         </small>
+
+        <div class="btn-group btn-group-sm">
+          <a
+            href="/bookmarks/<%= bookmark._id %>"
+            class="btn btn-outline-secondary"
+          >
+            View
+          </a>
+          <a
+            href="/bookmarks/<%= bookmark._id %>/edit"
+            class="btn btn-outline-warning"
+          >
+            Edit
+          </a>
+          <form
+            action="/bookmarks/<%= bookmark._id %>/delete"
+            method="POST"
+            onsubmit="return confirm('Delete this bookmark?');"
+          >
+            <button class="btn btn-outline-danger">Delete</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

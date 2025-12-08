@@ -41,6 +41,11 @@ const bookmarkSchema = new mongoose.Schema(
       },
     ],
 
+    isPublic: {
+      type: Boolean,
+      default: false,
+    },
+
     metadata: {
       type: mongoose.Schema.Types.Mixed, // Any structure
       default: {},
