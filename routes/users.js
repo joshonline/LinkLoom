@@ -20,8 +20,8 @@ router.get("/login", userController.getLogin);
 // POST /users/login
 router.post("/login", userController.postLogin);
 
-// POST /users/logout
-router.post("/logout", userController.logout);
+// get /users/logout
+router.get("/logout", userController.logout);
 
 // GET /users/profile
 router.get("/profile", ensureAuth, userController.getProfile);

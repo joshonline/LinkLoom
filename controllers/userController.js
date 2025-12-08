@@ -10,7 +10,7 @@ exports.getSignup = (req, res) => {
 // POST /signup (email, username, displayName, password)
 exports.postSignup = async (req, res) => {
   try {
-    console.log(req.body)
+    // console.log(req.body)
     const { email, username, displayName, password, password2 } = req.body;
 
     if (!email || !username || !password || !password2) {
@@ -110,7 +110,7 @@ exports.logout = (req, res, next) => {
         return res.status(500).send("Could not log out.");
       }
       res.clearCookie("connect.sid");
-      res.redirect("/login");
+      res.redirect("/users/login");
     });
   });
 };
