@@ -5,7 +5,7 @@ const Bookmark = require("../models/bookmarkModel");
 exports.listCollections = async (req, res) => {
   try {
     const collections = await Collection.find({
-      user: req.user._id,
+      $or: [{ user: req.user._id }, { isPublic: true }],
     }).exec();
     res.render("collections/list", { collections, title: "Your Collections" });
   } catch (err) {

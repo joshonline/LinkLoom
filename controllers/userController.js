@@ -10,7 +10,8 @@ exports.getSignup = (req, res) => {
 // POST /signup (email, username, displayName, password)
 exports.postSignup = async (req, res) => {
   try {
-    const { email, username, displayName, password, passowrd2 } = req.body;
+    console.log(req.body)
+    const { email, username, displayName, password, password2 } = req.body;
 
     if (!email || !username || !password || !password2) {
       return res.status(400).render("users/signup", {
