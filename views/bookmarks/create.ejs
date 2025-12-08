@@ -64,23 +64,28 @@
   </div>
 
   <div class="mb-3">
-    <label for="collections" class="form-label">Collections</label>
-    <select
-      id="collections"
-      name="collections"
-      class="form-select"
-      multiple
-      size="5"
-    >
-      <% if (!collections || collections.length === 0) { %>
-      <option disabled>No collections available</option>
-      <% } else { %> <% collections.forEach(function(collection) { %>
-      <option value="<%= collection._id %>"><%= collection.name %></option>
-      <% }); %> <% } %>
-    </select>
-    <small class="form-text text-muted">
-      Hold Ctrl (Cmd on Mac) to select multiple
-    </small>
+    <label class="form-label">Collections</label>
+
+    <% if (!collections || collections.length === 0) { %>
+    <p class="text-muted">You have no collections yet.</p>
+    <% } else { %>
+    <div class="border rounded p-3">
+      <% collections.forEach(function(collection) { %>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          name="collections"
+          value="<%= collection._id %>"
+          id="collection-<%= collection._id %>"
+        />
+        <label class="form-check-label" for="collection-<%= collection._id %>">
+          <%= collection.name %>
+        </label>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
   </div>
 
   <button type="submit" class="btn btn-primary">Create Bookmark</button>

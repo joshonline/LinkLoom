@@ -60,20 +60,25 @@
   </div>
 
   <div class="mb-3">
-    <label for="collections" class="form-label"
-      >Collections (comma separated IDs)</label
-    >
-    <input
-      type="text"
-      class="form-control"
-      id="collections"
-      name="collections"
-      value="<%= bookmark.collections ? bookmark.collections.join(', ') : '' %>"
-      placeholder="collectionId1, collectionId2"
-    />
-    <small class="form-text text-muted">
-      Enter collection IDs separated by commas.
-    </small>
+    <label class="form-label">Collections</label>
+
+    <% if (collections.length === 0) { %>
+    <p class="text-muted">You have no collections yet.</p>
+    <% } else { %>
+    <div class="border rounded p-3">
+      <% collections.forEach(function(collection) { %>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="collections"
+        value="<%= collection._id %>" id="collection-<%= collection._id %>" <%=
+        bookmark.collections.some(c => c._id.toString() ===
+        collection._id.toString() ) ? 'checked' : '' %> />
+        <label class="form-check-label" for="collection-<%= collection._id %>">
+          <%= collection.name %>
+        </label>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
   </div>
 
   <button type="submit" class="btn btn-primary">Save Changes</button>

@@ -93,11 +93,18 @@ exports.getEditBookmark = async (req, res) => {
     const bookmark = await Bookmark.findOne({
       _id: req.params.id,
       user: req.user._id,
-    });
+    }).populate("collections");
     if (!bookmark) {
       return res.status(404).send("Bookmark not found");
     }
-    res.render("bookmarks/edit", { bookmark, title: "Edit Bookmark" });
+
+    const collections = await Collection.find({ user: req.user._id });
+
+    res.render("bookmarks/edit", {
+      bookmark,
+      collections,
+      title: "Edit Bookmark",
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error loading bookmark for editing.");
@@ -111,22 +118,24 @@ exports.postEditBookmark = async (req, res) => {
       _id: req.params.id,
       user: req.user._id,
     });
+
     if (!bookmark) {
       return res.status(404).send("Bookmark not found");
     }
 
-    const { url, title, description, faviconUrl, tags, collections } = req.body;
+    const { url, title, description, faviconUrl, tags } = req.body;
 
-    if (collections) {
-      let collectionsArr = collections;
-      if (!Array.isArray(collectionsArr)) {
-        collectionsArr = [collectionsArr];
+    let collectionsInput = req.body.collections;
+    let collections = [];
+
+    if (collectionsInput) {
+      if (!Array.isArray(collectionsInput)) {
+        collectionsInput = [collectionsInput];
       }
-      bookmark.collections = collectionsArr.map(
+
+      collections = collectionsInput.map(
         (id) => new mongoose.Types.ObjectId(id)
       );
-    } else {
-      bookmark.collections = [];
     }
 
     bookmark.url = url;
@@ -134,10 +143,10 @@ exports.postEditBookmark = async (req, res) => {
     bookmark.description = description;
     bookmark.faviconUrl = faviconUrl;
     bookmark.tags = tags ? tags.split(",").map((t) => t.trim()) : [];
-    bookmark.collections = collections ? collections.split(",") : [];
+    bookmark.collections = collections;
 
     await bookmark.save();
-    res.redirect("/bookmarks");
+    res.redirect(`/bookmarks/${bookmark._id}`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error updating bookmark.");
@@ -147,8 +156,22 @@ exports.postEditBookmark = async (req, res) => {
 // POST /bookmarks/:id/delete (bookmark_id)
 exports.deleteBookmark = async (req, res) => {
   try {
+     const bookmark = await Bookmark.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+    
+    if (!bookmark) {
+      return res.status(404).send("Bookmark not found");
+    }
+
+    // Update collections
+    await Collection.updateMany(
+      { _id: { $in: bookmark.collections } },
+      { $pull: { bookmarks: bookmark._id } }
+    );
+
     await Bookmark.deleteOne({ _id: req.params.id, user: req.user._id });
-    //TASK: Need to update collections
     res.redirect("/bookmarks");
   } catch (err) {
     console.error(err);
