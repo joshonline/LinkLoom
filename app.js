@@ -3,7 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-var expressLayouts = require("express-ejs-layouts");
+// var expressLayouts = require("express-ejs-layouts");
 var connectDB = require("./config/db");
 
 var indexRouter = require("./routes/index");
@@ -16,6 +16,7 @@ const useSessions = process.env.USE_SESSIONS === "true";
 
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const passport = require("passport");
 
 var app = express();
 
@@ -50,12 +51,18 @@ if (useSessions) {
     })
   );
 }
+
+require("./config/passport")(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Log whether sessions are used
 console.log(`Using sessions: ${useSessions ? "YES" : "NO"}`);
 
 // default locals
 app.use(function (req, res, next) {
   res.locals.title = res.locals.title || "LinkLoom";
+  res.locals.user = req.user || null;
   next();
 });
 

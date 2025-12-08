@@ -1,13 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const { ensureAuth } = require("../middleware/auth");
 
 // GET /users/ - redirect dashboard if logged in
 router.get("/", (req, res) => {
-  if (req.session && req.session.userId) {
-    return res.redirect("/bookmarks/list");
-  }
-  res.redirect("/users/login");
+  return res.redirect("/users/profile");
 });
 
 // GET /users/signup
@@ -22,13 +20,13 @@ router.get("/login", userController.getLogin);
 // POST /users/login
 router.post("/login", userController.postLogin);
 
-// POST /users/logout
-router.post("/logout", userController.logout);
+// get /users/logout
+router.get("/logout", userController.logout);
 
 // GET /users/profile
-router.get("/profile", userController.getProfile);
+router.get("/profile", ensureAuth, userController.getProfile);
 
 // POST /users/profile
-router.post("/profile", userController.postProfile);
+router.post("/profile", ensureAuth, userController.postProfile);
 
 module.exports = router;
