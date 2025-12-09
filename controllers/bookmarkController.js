@@ -35,6 +35,16 @@ exports.postCreateBookmark = async (req, res) => {
   try {
     const { url, title, description, faviconUrl, tags } = req.body;
 
+    const existing = await Bookmark.findOne({
+      user: req.user._id,
+      url: url.trim(),
+    });
+
+    //silent rejection of duplicate bookmarks
+    if (existing) {
+      return res.redirect("/bookmarks");
+    }
+
     let collectionsInput = req.body.collections;
     let collections = [];
 
@@ -58,6 +68,15 @@ exports.postCreateBookmark = async (req, res) => {
     });
 
     await bookmark.save();
+
+    //update collections
+    if (collections.length > 0) {
+      await Collection.updateMany(
+        { _id: { $in: collections } },
+        { $push: { bookmarks: bookmark._id } }
+      );
+    }
+
     res.redirect("/bookmarks");
   } catch (err) {
     console.error(err);
@@ -125,18 +144,27 @@ exports.postEditBookmark = async (req, res) => {
 
     const { url, title, description, faviconUrl, tags } = req.body;
 
-    let collectionsInput = req.body.collections;
-    let collections = [];
+    let collectionsInput = req.body.collections || [];
 
-    if (collectionsInput) {
-      if (!Array.isArray(collectionsInput)) {
-        collectionsInput = [collectionsInput];
-      }
-
-      collections = collectionsInput.map(
-        (id) => new mongoose.Types.ObjectId(id)
-      );
+    if (!Array.isArray(collectionsInput)) {
+      collectionsInput = [collectionsInput];
     }
+
+    const collections = collectionsInput.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+
+    // pull bookmark id from all current collections
+    await Collection.updateMany(
+      { _id: { $in: bookmark.collections } },
+      { $pull: { bookmarks: bookmark._id } }
+    );
+
+    // update collections in db
+    await Collection.updateMany(
+      { _id: { $in: collections } },
+      { $addToSet: { bookmarks: bookmark._id } }
+    );
 
     bookmark.url = url;
     bookmark.title = title;
@@ -156,11 +184,11 @@ exports.postEditBookmark = async (req, res) => {
 // POST /bookmarks/:id/delete (bookmark_id)
 exports.deleteBookmark = async (req, res) => {
   try {
-     const bookmark = await Bookmark.findOne({
+    const bookmark = await Bookmark.findOne({
       _id: req.params.id,
       user: req.user._id,
     });
-    
+
     if (!bookmark) {
       return res.status(404).send("Bookmark not found");
     }
