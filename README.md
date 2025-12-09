@@ -60,7 +60,8 @@ Make sure these are set in your deployment environment.
 
 ## Basic Visualization
 
-![[public/images/architecture-diagram.png]]
+<img width="3125" height="1600" alt="image" src="https://github.com/user-attachments/assets/4481fed4-9823-4772-a65e-9a8c49617305" />
+
 
 ---
 
