@@ -46,14 +46,17 @@ exports.getCollectionById = async (req, res) => {
     const collection = await Collection.findOne({
       _id: req.params.id,
       user: req.user._id,
-    })
-      .populate("bookmarks")
-      .exec();
+    });
+
     if (!collection) {
       return res.status(404).send("Collection not found");
     }
-    // TASK: Need to retrieve bookmarks in collection
-    res.render("collections/detail", { collection, title: collection.name });
+    // retrieve bookmarks in collection
+    const bookmarks = await Bookmark.find({ collections: collection._id });
+    res.render("collections/detail", {
+      collection: { ...collection.toObject(), bookmarks },
+      title: collection.name,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error loading collection.");
